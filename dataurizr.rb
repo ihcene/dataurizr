@@ -68,6 +68,10 @@ class Dataurizr
     end
   end
   
+  def available_actions
+    self.methods.select{ |e| e.slice(0, 3) == "do_" }
+  end
+  
   private
     def cssfile_process(file_content, file_path)
       file_content.gsub(%r{url\(["']?(.+?)["']?\)}) { |s| "url(#{read_encode_img($1, file_path)})" }

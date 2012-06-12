@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8"> 
+  	<title>DataURIzr — un outil transformateur en ligne</title>
+  	
+  	<style>
+  	  body{
+  	    background-color: #F1F1F1;
+  	    font: normal 100% Gill Sans, My Gill Sans, "Trebuchet MS", Verdana, "Lucida Grande", Tahoma, Helvetica, Sans-Serif;
+  	    
+  	    margin: 0;
+  	    padding: 0;
+  	    
+  	    width: 100%;
+  	  }
+  	  
+  	  #page{
+	      background-color: white;
+        -webkit-box-shadow: 0px 0px 5px 5px rgb(230, 230, 230);
+        box-shadow: 0px 0px 5px 5px rgb(230, 230, 230);
+    	  width: 500px;
+	    
+	      margin: 0 auto;
+  	  }
+  	  
+  	  a{
+  	    color: #c3325f;
+  	    text-decoration: none;
+  	  }
+  	  
+  	  a:hover{
+  	    color: #f89406;
+  	    background-color: #FFFEF0;
+  	  }
+  	  
+  	  #content{
+  	    padding: 10px;
+  	      padding-bottom: 0;
+    	    padding-top: 0;
+  	  }
+  	  
+  	  h1{
+  	    font-family: georgia;
+  	    margin-top: 0;
+  	  }
+  	  
+  	  form{
+  	    padding: 10px;
+  	    border: 1px dashed #F1F1F1;
+        
+        background-color: #FFFEF0;
+  	  }
+  	  
+    	  form input[type="text"]{
+    	    width: 98%;
+    	  }
+    	  
+    	.others{
+    	  text-align: center;
+    	}
+  	</style>
+  	
+
+  </head>
+
+  <body>
+    <div id="page">
+      <canvas id="tuto" width="500" height="100"></canvas>
+      <script>
+        var canvas = document.getElementById('tuto');
+        var ctx = canvas.getContext('2d');
+
+        var numberOfLines = 5;
+        var i = 0;
+        var cycle = function() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          for(var j=0; j<numberOfLines; ++j) {
+            ctx.lineWidth = 1+2*(numberOfLines-j);
+            ctx.strokeStyle = 'rgba(100,200,'+Math.floor(Math.abs(Math.cos(i/80)*256))+','+(j/5+0.1)+')';
+            var offset = (i+j*10*Math.abs(Math.cos(i/100)))/20;
+            var y = (Math.sin(offset)+1)*canvas.height/2;
+            var cpy1 = (Math.cos(offset)+0.5)*canvas.height;
+            var cpy2 = canvas.height - cpy1;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.bezierCurveTo(canvas.width/3, cpy1, 2*canvas.width/3, cpy2, canvas.width, y);
+            ctx.stroke();
+          }
+          i++;
+        };
+        setInterval(cycle, 30);
+      </script>
+      
+      <div id="content">
+        <h1>• DataURIzr</h1>
+      
+        <a href="http://idelways.com">
+          <img src="logo-banner.png" alt="" style="float: right" />
+        </a>
+        
+        <p>Je suis un outil de transformation en ligne, qui combine à toute page Web ses (nombreux ?) assets (images, <abbr title="Cascading Style Sheet">CSS</abbr>, JavaScript) en un seul fichier bien gros à l'aide des <a href="http://en.wikipedia.org/wiki/Data_URI_scheme">schémas Data-URI</a>.</p>
+        
+        <ul>
+          <li>Me forker <a href="https://github.com/Idelways/dataurizr">sur Github</a></li>
+          <li><a href="http://www.facebook.com/RayidTR">Contacter mon créateur Rayid Tayeb-Rahmani sur Facebook</a></li>
+        </ul>
+      
+        <p><strong>Idéal pour mettre en cache des pages entières pour les applications mobiles.</strong> Il existe en effet plusieurs outils en ligne mais qui ne tranforme que des images individuelles</p>
+      
+        <form action="/do" method="post">      
+          <p>
+            <strong>Allons-y : </strong>
+          </p>
+          
+          <p>
+            <input type="text" placeholder="Une URL, n'importe laquelle, pour peu qu'elle soit accessible !" />
+          </p>
+        
+          <p>
+            <strong>Quelques options : </strong>
+          </p>
+        
+          <p>
+            <label><input type="checkbox" name="do_javascript" value="1" checked /> Inclure le contenu des fichiers JavaScript</label>
+            <br />
+            <label><input type="checkbox" name="do_css" value="1" checked /> Inclure les fichiers CSS et <em>URIzer</em> les images d'arrière plan</label>
+            <br />
+            <label><input type="checkbox" name="do_images" value="1" checked /> <em>URIzer</em> les balises &lt;IMG /&gt;</label>
+            <br />                             
+            <label><input type="checkbox" name="do_inline_css" value="1" checked /> <em>URIzer</em> les images d'arrière plan du CSS inline</label>
+          </p>
+          
+          <p style="center"><input type="submit" value="Transformer !"></p>
+        </form>
+        
+        <p><strong>Kisako ?</strong> Data-URI est un schéma d'URI (Uniform Resource Identifier) contenant directement les données qu'il identifie, contrairement à la plupart des autres schémas. Data-URI est aujourd'hui utilisable en production, bien souvent appelé pour augmenter légèrement les performances de vos sites web à l'aide de données embarquées via data: et encodées en base64. Ces gains ne seront évidemment perceptibles qu'à condition d'utiliser ce schéma de manière pertinente. <a href="http://www.alsacreations.com/article/lire/1439-data-uri-schema.html">En savoir davantage &rarr;</a></p>
+        
+        
+        <p>
+          <strong>Voir un autre de mes projets open-source : </strong>
+        </p>
+        
+        <div class="others"><a href="http://wikibref.org"><img src="http://wikibref.org/assets/common/logo-a20d2e7f92c04e7c19ba1755dd79718a.png" alt="Wikibref"></a></div>
+      </div>
+    </div>
+  </body>
+</html>
