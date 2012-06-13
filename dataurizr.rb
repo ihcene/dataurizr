@@ -20,6 +20,7 @@ class Dataurizr
   
   def do_images
     @doc.css('img, input[type=image]').each do |img|
+      puts "Bidule #{img[:src]}"
       img[:src] = read_encode_img(img[:src]);
     end
   end
@@ -87,13 +88,13 @@ class Dataurizr
       else
         puts url
         begin
-          @cache[url] = open(url).read
+          return @cache[url] = open(url).read
         rescue OpenURI::HTTPError
           (@notfound ||= []) << url
           puts "404 : #{url}"
-          ""
+          return ""
         rescue OpenSSL::SSL::SSLError
-          ""
+          return ""
         end
       end
     end
@@ -106,22 +107,37 @@ class Dataurizr
       end
     end
     
+    def encode_url_if_necessary(url)
+      begin
+        url.encode("US-ASCII")
+        url
+      rescue   
+        URI.encode(url)
+      end
+    end
+    
     def read_encode_img(uri, to = @url)
       absolute_url = get_absolute_url(uri, to)
-      
-      # TODO : make true image type detection
       
       img = grab_content(absolute_url)
       
       if img != ""
         "data:image/#{detect_mime_type(uri)};base64,#{Base64.strict_encode64(img)}"
+      else
+        ""
       end
     end
     
     def get_absolute_url(uri, to = @url)
       # already absolute (with scheme)
+      uri = encode_url_if_necessary(uri)
+      
       if uri =~ %r{\Ahttp://}
         uri
+      elsif uri =~ %r{\A//}
+        # take the schema
+        p = URI(to)
+        p.scheme + ":" + uri
       elsif uri =~ %r{\A/}
         p = URI(to)
         p.path = ''
