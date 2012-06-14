@@ -99,6 +99,12 @@ class Dataurizr
     end
   end
   
+  def do_links
+    @doc.css('a[href]').each do |link|
+      link[:href] = URICombinator.combine(link[:href], @url)
+    end
+  end
+  
   def available_actions
     self.methods.select{ |e| e.slice(0, 3) == "do_" }
   end
@@ -138,8 +144,8 @@ class Dataurizr
     end
     
     def encode_url_if_necessary(url)
+      # A clever way to detect if the url needs to be encoded. And to avoid double encoding.
       begin
-        # A clever way to 
         url.encode("US-ASCII")
         url
       rescue   
