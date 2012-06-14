@@ -11,7 +11,7 @@ class Dataurizr
       elsif relative[0, 2] == "//"
         # take the schema
         p = URI(to_absolute)
-        p.scheme + ":" + uri
+        p.scheme + ":" + relative
       elsif relative[0, 1] == "/"
         p = URI(to_absolute)
         p.path = ''
