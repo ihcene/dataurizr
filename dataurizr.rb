@@ -4,6 +4,36 @@ require 'nokogiri'
 require 'base64'
 
 class Dataurizr
+  class URICombinator
+    def self.combine(relative, to_absolute)
+      if relative[0, 7] == "http://"
+        relative
+      elsif relative[0, 2] == "//"
+        # take the schema
+        p = URI(to_absolute)
+        p.scheme + ":" + uri
+      elsif relative[0, 1] == "/"
+        p = URI(to_absolute)
+        p.path = ''
+        p.query = nil
+        p.to_s + relative
+      else
+        p = URI(to_absolute)
+        p.path = pop_file_part(p.path)
+        p.query = nil
+        p.to_s + relative
+      end
+    end
+    
+    def self.pop_file_part(path)
+      return path if path[-1, 1] == "/"
+      
+      without_file = path.split('/')
+      without_file.pop
+      without_file.join('/') + "/"
+    end
+  end
+  
   def initialize(url)
     @url = prefix_url_if_necessary(url)
     
@@ -109,6 +139,7 @@ class Dataurizr
     
     def encode_url_if_necessary(url)
       begin
+        # A clever way to 
         url.encode("US-ASCII")
         url
       rescue   
@@ -132,31 +163,7 @@ class Dataurizr
       # already absolute (with scheme)
       uri = encode_url_if_necessary(uri)
       
-      if uri =~ %r{\Ahttp://}
-        uri
-      elsif uri =~ %r{\A//}
-        # take the schema
-        p = URI(to)
-        p.scheme + ":" + uri
-      elsif uri =~ %r{\A/}
-        p = URI(to)
-        p.path = ''
-        p.query = nil
-        p.to_s + uri
-      else
-        p = URI(to)
-        p.path = pop_file_part(p.path)
-        p.query = nil
-        p.to_s + uri
-      end
-    end
-    
-    def pop_file_part(path)
-      return path if path[-1, 1] == "/"
-      
-      without_file = path.split('/')
-      without_file.pop
-      without_file.join('/') + "/"
+      URICombinator.combine(uri, to)
     end
     
     def detect_mime_type(filename)
