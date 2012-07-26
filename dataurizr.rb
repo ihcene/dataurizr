@@ -111,7 +111,7 @@ class Dataurizr
   
   private
     def cssfile_process(file_content, file_path)
-      file_content.gsub(%r{url\(["']?(.+?)["']?\)}) { |s| "url(#{read_encode_img($1, file_path)})" }
+      file_content.gsub(%r{url\(["']?(.+?)["']?\)}) { |s| "url(#{read_encode_img($1.strip, file_path)})" }
     end
   
     def grab_content(url)
